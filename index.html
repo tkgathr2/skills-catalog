@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スキル発動トリガー一覧 | 高木産業グループ</title>
+<style>
+  :root{
+    --bg:#0f1419; --bg2:#1a2029; --card:#1e2630; --card-hover:#252f3d;
+    --text:#e6edf3; --text-dim:#8b98a5; --border:#2d3742;
+    --accent:#4d9fff; --accent2:#7c5cff;
+    --auto:#2ea043; --pres:#e3a008; --pres-bg:#3a2e09;
+    --tag-bg:#243447; --tag-text:#9fc4ff;
+    --shadow:0 4px 20px rgba(0,0,0,.35);
+  }
+  [data-theme="light"]{
+    --bg:#f5f7fa; --bg2:#ffffff; --card:#ffffff; --card-hover:#f0f4f9;
+    --text:#1a2029; --text-dim:#5a6878; --border:#e1e8ef;
+    --accent:#0969da; --accent2:#6639d6;
+    --auto:#1a7f37; --pres:#9a6700; --pres-bg:#fff8c5;
+    --tag-bg:#ddf0ff; --tag-text:#0a4a8f;
+    --shadow:0 4px 16px rgba(0,0,0,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.6;
+    -webkit-font-smoothing:antialiased;transition:background .2s;
+  }
+  header{
+    background:linear-gradient(135deg,var(--bg2),var(--card));
+    border-bottom:1px solid var(--border);
+    padding:24px 20px 18px;position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(8px);
+  }
+  .head-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1280px;margin:0 auto}
+  h1{font-size:22px;font-weight:700;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
+  h1 .emoji{font-size:26px}
+  .sub{color:var(--text-dim);font-size:13px;margin-top:2px}
+  .spacer{flex:1}
+  .theme-btn{
+    background:var(--card);border:1px solid var(--border);color:var(--text);
+    border-radius:10px;padding:8px 14px;cursor:pointer;font-size:14px;transition:.15s;
+  }
+  .theme-btn:hover{background:var(--card-hover)}
+  .search-wrap{max-width:1280px;margin:16px auto 0;position:relative}
+  #search{
+    width:100%;padding:14px 18px 14px 46px;font-size:16px;
+    background:var(--bg);border:1.5px solid var(--border);border-radius:14px;
+    color:var(--text);outline:none;transition:.15s;
+  }
+  #search:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(77,159,255,.15)}
+  .search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:18px}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;max-width:1280px;margin:14px auto 0}
+  .chip{
+    background:var(--card);border:1px solid var(--border);color:var(--text-dim);
+    border-radius:20px;padding:6px 14px;cursor:pointer;font-size:13px;font-weight:600;
+    transition:.15s;user-select:none;white-space:nowrap;
+  }
+  .chip:hover{background:var(--card-hover);color:var(--text)}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .stats{max-width:1280px;margin:14px auto 0;color:var(--text-dim);font-size:13px}
+  main{max-width:1280px;margin:0 auto;padding:20px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:18px;transition:.18s;display:flex;flex-direction:column;gap:10px;
+    animation:fade .25s ease;
+  }
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .card:hover{background:var(--card-hover);border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  .card-name{font-size:16px;font-weight:700;color:var(--text)}
+  .card-alias{font-size:12px;color:var(--accent);font-weight:600;margin-top:1px}
+  .scope{font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;white-space:nowrap;flex-shrink:0}
+  .scope.auto{background:rgba(46,160,67,.15);color:var(--auto);border:1px solid var(--auto)}
+  .scope.pres{background:var(--pres-bg);color:var(--pres);border:1px solid var(--pres)}
+  .card-cat{display:inline-block;font-size:11px;color:var(--text-dim);font-weight:600}
+  .card-desc{font-size:13px;color:var(--text-dim);line-height:1.5}
+  .triggers{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+  .trig{
+    background:var(--tag-bg);color:var(--tag-text);font-size:12px;font-weight:600;
+    padding:4px 10px;border-radius:8px;white-space:nowrap;
+  }
+  .trig-label{font-size:11px;color:var(--text-dim);font-weight:700;width:100%;margin-bottom:2px}
+  .empty{text-align:center;padding:60px 20px;color:var(--text-dim);font-size:15px}
+  mark{background:var(--accent);color:#fff;border-radius:3px;padding:0 2px}
+  footer{text-align:center;color:var(--text-dim);font-size:12px;padding:30px 20px 50px}
+  @media(max-width:640px){
+    .grid{grid-template-columns:1fr}
+    h1{font-size:18px}
+    #search{font-size:15px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="head-row">
+    <div>
+      <h1><span class="emoji">🎛️</span>スキル発動トリガー一覧</h1>
+      <div class="sub">どの言葉を言えば、どのスキルが起動するか — 高木産業グループ Claude Code</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="theme-btn" id="themeBtn">🌙 ダーク</button>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input id="search" type="text" placeholder="キーワードで検索（例：送って / バグ / 同期 / 画像 / 仕様書 / 要件）" autocomplete="off">
+  </div>
+  <div class="filters" id="filters"></div>
+  <div class="stats" id="stats"></div>
+</header>
+<main>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none">該当するスキルがありません。別のキーワードでお試しください。</div>
+</main>
+<footer>
+  💡 緑バッジ＝真田判断で自動実行 ／ 黄バッジ＝対人送信など社長確認が要る操作（社長専管3件）<br>
+  データ源：各スキルの発動条件（description）＋ CLAUDE.md のキーワードトリガー
+</footer>
+
+<script>
+const CATS = {
+  dev:"💻 開発・品質", org:"🏛️ 組織・部長制", send:"📤 送信・連絡",
+  sync:"🔄 同期・PC連携", design:"🎨 デザイン・画像", browser:"🌐 ブラウザ・ログイン",
+  keiei:"📊 経営・財務・法務", sched:"📅 予定・スケジュール", util:"🛠️ 自動化・補助",
+  doc:"📄 文書・データ生成", omc:"⚙️ OMC開発支援", builtin:"🔧 組み込みコマンド"
+};
+
+const SKILLS = [
+  // ===== 開発・品質 =====
+  {n:"cto-room-dev", a:"CTO Agent Lab", cat:"dev", scope:"auto", d:"仮想10名チームで開発依頼を要件整理→設計→実装→レビュー→テストまで遂行。", t:["開発して","直して","作って","機能追加して","Agent Labで進めて","ラボでやって","コードレビューして","テスト書いて"]},
+  {n:"bug-check-lab", a:"バグチェックラボ", cat:"dev", scope:"auto", d:"3名が別観点で独立にコードを読み、実行で裏取りして本物のバグだけ報告。", t:["バグチェックして","バグを探して","ちゃんと動く？","おかしくない？","品質チェックして","検証して","3人でバグチェック"]},
+  {n:"bug-hunt-board", a:"バグ探索ボード", cat:"dev", scope:"auto", d:"バグを洗い出して台帳化。発見後のローカル修正は確認なしで即実行。", t:["バグハント","バグを洗い出して","バグ一覧"]},
+  {n:"spec-writer", a:"仕様書作成チーム", cat:"dev", scope:"auto", d:"詳細設計・仕様書を作成。「仕様書」の語が出た瞬間に必ず起動。", t:["仕様書","spec","仕様書を作って","詳細設計して"]},
+  {n:"youken-room", a:"要件定義チーム", cat:"dev", scope:"auto", d:"風間ラボ長＋9名が「何を・なぜ・誰に・成功条件」を言語化。", t:["要件定義して","要件をまとめて","MVPを決めて","ユーザーストーリー","MoSCoW","受け入れ基準","要件ラボで"]},
+  {n:"detail-design-lab", a:"詳細設計ラボ", cat:"dev", scope:"auto", d:"仕様を詳細設計レベルまで落とし込む。", t:["詳細設計して","設計を詰めて"]},
+  {n:"gaibun-design-lab", a:"外部設計ラボ", cat:"dev", scope:"auto", d:"画面・API・データの外部設計を担当。", t:["外部設計して","画面設計","API設計"]},
+  {n:"totonou-kun", a:"ととのうくん", cat:"dev", scope:"auto", d:"膨らんだ詳細設計を「削る方向」だけでチェック（5観点）。", t:["ととのうくん","整えて","軽量チェック","基本設計をととのうくんで"]},
+  {n:"brushup-loop", a:"ブラッシュアップループ", cat:"dev", scope:"auto", d:"成果物を60点→100点へ磨き、また60点とみなし反復（既定5回）。", t:["ブラッシュアップして","磨き上げて","100点にして","完成度を上げて","練り直して","クオリティを上げて"]},
+  {n:"auto-merge-deploy", a:"自動マージ・デプロイ", cat:"dev", scope:"auto", d:"PR作成後にCI green→squashで自動マージ・デプロイ。", t:["自動マージ","マージして","デプロイして"]},
+  {n:"qa-room", a:"QAラボ", cat:"dev", scope:"auto", d:"品質保証室。テスト戦略・受け入れ確認。", t:["QAして","品質保証","テスト戦略"]},
+  {n:"release-team", a:"リリースチーム", cat:"dev", scope:"auto", d:"リリース準備・チェックリスト・公開作業。", t:["リリースして","公開準備","リリースチームで"]},
+  {n:"site-design-room", a:"サイト設計室", cat:"dev", scope:"auto", d:"Webサイトの構成・設計。", t:["サイト設計","サイトを作って","ページ構成"]},
+  {n:"legend-board", a:"レジェンドボード", cat:"dev", scope:"auto", d:"開発の知見・伝説的事例を集約。", t:["レジェンドボード"]},
+
+  // ===== 組織・部長制 =====
+  {n:"hisho-room", a:"社長室（早乙女）", cat:"org", scope:"auto", d:"部署指定なしの依頼を室長 早乙女が判定し担当部長へ自動振り分け→統合報告。", t:["社長室","振り分けて","誰に聞けばいい？","各部署に聞いて","どこの担当か分からないけど","秘書室"]},
+  {n:"senmu-room", a:"専務室（鷹司）", cat:"org", scope:"auto", d:"執行No.2 鷹司が全社横断・部署またぎ案件を裁定・束ね・完遂。", t:["専務に頼む","専務で進めて","鷹司さんに","ワッシー","全社で","部署をまたいで","完遂させて","社長の代理で"]},
+  {n:"hisho-shitsu", a:"社長室 実務チーム", cat:"org", scope:"auto", d:"日程・下書き・資料・段取りなど社長まわりの実務（副室長 朝倉）。", t:["社長室の実務","段取りして","資料を用意して"]},
+  {n:"soumu-room-dev", a:"総務・オペ部（室井）", cat:"org", scope:"auto", d:"現業オペ・バックオフィス一元化・業務標準化。", t:["現場を回して","標準化して","属人化を解消して","総務で"]},
+  {n:"ops-room", a:"オペレーション室", cat:"org", scope:"auto", d:"業務オペレーションの設計・改善。", t:["オペレーションを","業務フローを","回す仕組み"]},
+  {n:"marketing-room", a:"マーケ部（鏑木）", cat:"org", scope:"auto", d:"集客・広告・LP・CRM/LTV・SEO/SNS・効果測定。", t:["集客して","広告","LPを作って","CVを上げて","リードを増やして","マーケで"]},
+  {n:"design-room", a:"デザイン部（久世）", cat:"org", scope:"auto", d:"UI/UX・画面/LP設計・デザインシステム・ビジュアル。", t:["デザインして","画面を直して","使いにくい","垢抜けさせて","レイアウトを直して","配色"]},
+  {n:"branding-room", a:"ブランディング部（久遠）", cat:"org", scope:"auto", d:"ブランド戦略・パーパス・ネーミング・トンマナ・一貫性。", t:["ブランディング","世界観","名前を考えて","コピーを","らしさ"]},
+  {n:"aidx-room", a:"AIDX部（神楽）", cat:"org", scope:"auto", d:"生成AI活用・業務自動化・データ基盤・DX推進。", t:["AIでできない？","DX","自動化して","PoC設計して"]},
+  {n:"sales-room-dev", a:"AI・DX営業ラボ（剣持）", cat:"org", scope:"auto", d:"受託営業。引合い→提案→見積→受注→月額転換を型化・値付け。", t:["営業チームで","この案件いくらで売る？","見積もりして","値付けして","商談どう進める？","ロールプレイして"]},
+  {n:"stepup-sanbou", a:"SU経営参謀本部", cat:"org", scope:"auto", d:"ステップアップ経営参謀（仮想10名）→9部署連携。", t:["SU参謀","ステップアップの経営","経営の相談"]},
+  {n:"legal-board", a:"法務ボード", cat:"org", scope:"auto", d:"法務・契約・コンプラの検討ボード。", t:["法務で見て","契約大丈夫？","コンプラ"]},
+  {n:"keiei-zaimu-lab", a:"財務ラボ（九条）", cat:"keiei", scope:"auto", d:"経理・財務・資金繰り・銀行・節税。", t:["資金繰り","銀行","節税","キャッシュは回る？","財務で"]},
+  {n:"keiei-suji-lab", a:"数字ラボ", cat:"keiei", scope:"auto", d:"管理会計・月次・経理実務の数字面。", t:["月次","数字を見て","管理会計"]},
+  {n:"keiei-houmu-lab", a:"法務ラボ（霧島）", cat:"keiei", scope:"auto", d:"法務・コンプラ・許認可・危機管理法務。", t:["警備業法","派遣法","反社チェック","訴訟","契約書"]},
+  {n:"keiei-senryaku-lab", a:"戦略ラボ", cat:"keiei", scope:"auto", d:"経営戦略の立案。", t:["戦略を","事業戦略","戦略で見て"]},
+  {n:"keiei-kikaku-lab", a:"企画ラボ", cat:"keiei", scope:"auto", d:"事業企画・新規企画。", t:["企画を","新規事業","企画で"]},
+  {n:"keiei-soshiki-lab", a:"組織ラボ", cat:"keiei", scope:"auto", d:"組織設計・組織開発。", t:["組織を","組織設計","組織で見て"]},
+  {n:"keiei-jinji-lab", a:"人事ラボ", cat:"keiei", scope:"auto", d:"人事・評価・採用方針。", t:["人事を","評価制度","採用方針"]},
+  {n:"keiei-risk-lab", a:"リスクラボ", cat:"keiei", scope:"auto", d:"リスク管理（発生確率×致命度）。", t:["リスクを","リスクで見て","危機管理"]},
+  {n:"keiei-tousei-lab", a:"統制ラボ", cat:"keiei", scope:"auto", d:"内部統制・ガバナンス。", t:["統制を","内部統制","ガバナンス"]},
+  {n:"kaisha-setsuritsu", a:"会社設立", cat:"keiei", scope:"auto", d:"会社設立の手続き・段取り。", t:["会社設立","法人を作る","設立手続き"]},
+  {n:"jinsei-sodan", a:"人生相談", cat:"util", scope:"auto", d:"社長の人生・経営の相談相手。", t:["人生相談","相談に乗って","悩みを聞いて"]},
+
+  // ===== 送信・連絡 =====
+  {n:"slack-send", a:"おくるくん", cat:"send", scope:"pres", d:"Slack送信フルコース。確認ウィンドウで提示→社長OK→送信→パーマリンク→返事待ち登録。", t:["Slackに送って","○○さんに送って","伝えて","連絡して","お願いして","Slackで返信して","おくるくん","フルコースで送って","フルバージョン"]},
+  {n:"sanada-send", a:"真田部長で送る", cat:"send", scope:"pres", d:"「CTO室 部長 真田 啓」名義Botでslack送信。", t:["真田部長として送って","真田名義で送って","CTO室の真田で","真田で送っといて"]},
+  {n:"daihitsu-room", a:"代筆室", cat:"send", scope:"auto", d:"メール・Slack文章を世界レベルの文章チームが粒度を上げて代筆（送信は別スキル）。", t:["代筆して","メール書いて","返信案を作って","文章を良くして","粒度を上げて","もっと具体的に"]},
+  {n:"virtual-sender", a:"仮想送信者くん", cat:"send", scope:"pres", d:"仮想人格を名前＋アイコン付きの実在発信者としてSlack投稿。", t:["室井名義でSlackに出して","真田部長として投稿して","○○の名前で送って","送信者として登録して"]},
+  {n:"slack-kuchou", a:"Slack口調", cat:"send", scope:"pres", d:"相手別に口調を使い分けてメッセージ生成。", t:["○○さんにSlackで伝えて","○○さんにお願いして","○○さんに報告して"]},
+  {n:"slack-channel-invite", a:"チャンネル招待くん", cat:"send", scope:"auto", d:"Slackチャンネルへの人・Botの招待を真田が自分で完遂。", t:["○○さんを招待して","Botを参加させて","/inviteしておいて","チャンネルに追加して"]},
+  {n:"slack-file-share", a:"Slackファイル共有", cat:"send", scope:"pres", d:"Slackへファイル添付（不可ならGドライブ共有リンク）。", t:["Slackにファイルを共有","このファイルを送って"]},
+  {n:"slack-hatsugen-by-person", a:"人物別発言", cat:"send", scope:"pres", d:"特定人物の発言として投稿。", t:["○○の発言として","人物別に投稿"]},
+  {n:"slack-post-confirm", a:"Slack投稿確認", cat:"send", scope:"pres", d:"投稿前の確認フォーマットを提示。", t:["投稿前に確認","この内容で投稿していい？"]},
+  {n:"meishi-room", a:"名刺室", cat:"send", scope:"auto", d:"名刺の作成・管理。", t:["名刺を作って","名刺室"]},
+  {n:"henji-machi-kun", a:"返事待ちくん", cat:"util", scope:"auto", d:"従業員へ投げた質問の返信を自動検知し作業を自動再開。", t:["返事待ちに登録","返信来たら続けて","返事来たら教えて","返事待ちくん"]},
+  {n:"dispatch-handoff", a:"バトンくん", cat:"util", scope:"auto", d:"Dispatchや他チームへの引き継ぎを1枚の台帳に集約・往復記録。", t:["バトンくん","Dispatchに投げて","○○チームに引き継いで","これ引き継いで","ボールはどっち"]},
+
+  // ===== 同期・PC連携 =====
+  {n:"skill-sync", a:"スキル同期", cat:"sync", scope:"auto", d:"3台PCのスキルをGitで同期。", t:["スキルを同期して","スキル同期","最新のスキルにして","スキルを揃えて"]},
+  {n:"brain-sync", a:"脳同期", cat:"sync", scope:"auto", d:"CLAUDE.md＋memoryを3台で同期。", t:["脳を同期","brain sync","CLAUDE.mdを揃えて"]},
+  {n:"sync-all", a:"フル同期くん", cat:"sync", scope:"auto", d:"脳・スキル・道具・コマンド・秘密・PC登録をまとめて同期。", t:["全部同期して","フル同期","3台揃えて","同期できてる？","sync all"]},
+  {n:"cross-pc-notion", a:"3台PC指示板", cat:"sync", scope:"auto", d:"3台PC間のNotion指示板でやりとり。", t:["3台に共有","共有したい","指示板に"]},
+  {n:"other-pc-notion-instructions", a:"他PC指示", cat:"sync", scope:"auto", d:"他PCへの指示をNotion経由で伝達。", t:["他のPCに指示","別PCへ伝えて"]},
+  {n:"remote-control", a:"リモコン", cat:"sync", scope:"auto", d:"PC間連携でメッセージ送受信＋遠隔指示・遠隔実行。", t:["別PCに指示を出して","遠隔で実行","PC間でメッセージ","リモートで実行","別PCに作業を投げて"]},
+  {n:"shared-sessions", a:"セッション共有", cat:"sync", scope:"auto", d:"Claude Codeセッション本体を全PCに展開しpin&resume可能に。", t:["セッションを共有","このセッションを他のPCで"]},
+  {n:"pin-sync", a:"ピン同期", cat:"sync", scope:"auto", d:"ピン留めセッションを同期。", t:["ピンを同期","pin sync"]},
+  {n:"skill-autopush", a:"スキル自動push", cat:"sync", scope:"auto", d:"スキル変更を自動でGitにpush。", t:["スキルをpush","自動push"]},
+  {n:"shikujiri-baton-sync", a:"しくじりバトン同期", cat:"sync", scope:"auto", d:"しくじり先生の記録を全PCで同期。", t:["しくじり同期","しくじりバトン"]},
+  {n:"hikitsugi", a:"引き継ぎくん", cat:"util", scope:"auto", d:"作業の引き継ぎ状態を整理・記録。", t:["引き継いで","引き継ぎくん","続きを引き継ぎ"]},
+
+  // ===== ブラウザ・ログイン =====
+  {n:"auto-login", a:"自動ログインくん", cat:"browser", scope:"auto", d:"各種ログイン画面に確認なしで自動ログイン。新ログインは手順書に追記。", t:["ログインして","自動ログインして","ログインしといて","入って","サインインして","次から自動で入って"]},
+  {n:"chrome-auto-connect", a:"Chrome自動接続", cat:"browser", scope:"auto", d:"ブラウザ操作前に毎回聞かず、このPCのChromeへ自動接続。", t:["自分のPCのChromeにつないで","いつものChromeで","ブラウザにつないで","Chromeを開いて"]},
+  {n:"chrome-remote-desktop", a:"Chromeリモートデスクトップ", cat:"browser", scope:"auto", d:"Chromeリモートデスクトップ操作。", t:["リモートデスクトップ","別PCの画面を操作"]},
+  {n:"fix-rdp-cursor", a:"RDPカーソル修正", cat:"browser", scope:"auto", d:"リモートデスクトップのカーソル不具合を修正。", t:["RDPのカーソル","カーソルがおかしい"]},
+
+  // ===== デザイン・画像 =====
+  {n:"nano-banana-image-gen", a:"ナノバナナ", cat:"design", scope:"auto", d:"Gemini Web版の画像生成をChrome操作で無料利用（アイコン/イラスト/ロゴ/サムネ）。", t:["画像を作って","アイコンを作って","イラストを描いて","ロゴを作って","ナノバナナ","サムネを作って","○○の絵を作って"]},
+  {n:"logo-design-team", a:"ロゴデザインチーム", cat:"design", scope:"auto", d:"ロゴを専門チームで設計・制作。", t:["ロゴを作って","ロゴデザイン","ロゴチームで"]},
+  {n:"saotome-creator", a:"早乙女クリエイター", cat:"design", scope:"auto", d:"早乙女名義のクリエイティブ制作。", t:["早乙女で作って","クリエイティブを"]},
+  {n:"bucho-chibi-icon", a:"部長ちびアイコン", cat:"design", scope:"auto", d:"部長のちびキャラアイコンを生成。", t:["部長アイコン","ちびアイコン","部長の顔を作って"]},
+  {n:"welcome-board", a:"ウェルカムボード", cat:"design", scope:"auto", d:"歓迎ボード・掲示物の制作。", t:["ウェルカムボード","歓迎ボード"]},
+
+  // ===== 予定・スケジュール =====
+  {n:"ido-jikan", a:"移動時間追加", cat:"sched", scope:"auto", d:"予定の前後に移動時間を自動でカレンダー登録。", t:["移動時間を追加","移動時間を入れて"]},
+  {n:"futari-schedule", a:"二人日程調整", cat:"sched", scope:"auto", d:"2者の日程を突き合わせて空きを提案。", t:["日程調整して","空いてる時間","二人の予定"]},
+  {n:"spir-schedule", a:"Spir日程調整", cat:"sched", scope:"auto", d:"Spirを使った日程調整。", t:["Spirで調整","日程候補を出して"]},
+  {n:"schedule", a:"スケジュール", cat:"sched", scope:"auto", d:"予定の確認・登録。", t:["予定を確認","スケジュールを","カレンダーを見て"]},
+  {n:"schedule-proposal", a:"日程提案", cat:"sched", scope:"auto", d:"候補日を提案。", t:["候補日を提案","日程を提案して"]},
+  {n:"voice-access-vocab", a:"音声アクセス辞書", cat:"util", scope:"auto", d:"音声アクセスのボキャブラリを追加・削除（Notion DB直編集）。", t:["ボキャブラリに追加","音声アクセスに追加","Voice Accessに追加","ボキャブラリから削除"]},
+  {n:"voice-access-setup", a:"音声アクセス設定", cat:"util", scope:"auto", d:"音声アクセスのセットアップ。", t:["音声アクセスを設定","Voice Accessセットアップ"]},
+  {n:"google-ime-dict-sync", a:"Google IME辞書同期", cat:"sync", scope:"auto", d:"Google IMEのユーザー辞書を同期。", t:["IME辞書を同期","変換辞書を"]},
+
+  // ===== 経営・分析 =====
+  {n:"mieruka-analysis", a:"ミエルカ分析", cat:"keiei", scope:"auto", d:"データの見える化・分析。", t:["ミエルカ","見える化して","分析して"]},
+  {n:"dx-interview-digest", a:"DXインタビュー要約", cat:"keiei", scope:"auto", d:"DXヒアリングの要約・整理。", t:["インタビューをまとめて","ヒアリング要約","DXインタビュー"]},
+  {n:"dx-roi-calc", a:"DX ROI試算", cat:"keiei", scope:"auto", d:"DX施策のROIを試算。", t:["ROIを試算","効果試算","DXのROI"]},
+  {n:"shuji-weekly-report", a:"週報（硯）", cat:"keiei", scope:"auto", d:"週報を作成。", t:["週報を作って","真田週報","週次レポート"]},
+  {n:"backlog-shuho-assistant", a:"Backlog週報", cat:"keiei", scope:"auto", d:"Backlogから週報を生成。", t:["Backlogの週報","週報をBacklogから"]},
+  {n:"task-araidashi-kun", a:"タスク洗い出しくん", cat:"util", scope:"auto", d:"タスクを洗い出して整理。", t:["タスクを洗い出して","やること整理","タスク洗い出し"]},
+  {n:"notion-task-sync", a:"Notionタスク同期", cat:"sync", scope:"auto", d:"タスクをNotionと同期。", t:["タスクをNotionに","Notion同期"]},
+
+  // ===== Plaud・録音・MFC =====
+  {n:"plaud-generate-all", a:"Plaud一括生成", cat:"util", scope:"auto", d:"Plaudの未生成録音をWeb操作で全部文字起こし＋要約。", t:["Plaud生成して","未生成を全部生成","Plaudの文字起こし","Plaud回して"]},
+  {n:"lore-plaud-daily", a:"ロア（録音資産化）", cat:"util", scope:"auto", d:"tl;dv/Plaudの録音を日次で資産化。", t:["録音を資産化","ロア","Plaud日次"]},
+  {n:"video-transcription", a:"動画文字起こし", cat:"util", scope:"auto", d:"動画の文字起こし。", t:["動画を文字起こし","この動画の内容を"]},
+  {n:"mfc-auth", a:"MFクラウド認証", cat:"keiei", scope:"auto", d:"マネーフォワードの認証。", t:["MFにログイン","マネフォ認証"]},
+  {n:"mfc-invoice-upload", a:"MF請求書アップ", cat:"keiei", scope:"auto", d:"MFクラウドへ請求書をアップロード。", t:["請求書をMFに","MFにアップロード"]},
+  {n:"indeed-phone-fetch", a:"Indeed電話取得", cat:"util", scope:"auto", d:"Indeedから応募者の電話番号を取得。", t:["Indeedの電話","応募者の電話番号"]},
+  {n:"mail-forwarding", a:"メール転送", cat:"util", scope:"auto", d:"メールの転送設定・実行。", t:["メールを転送","転送設定"]},
+  {n:"address-creation", a:"住所作成", cat:"util", scope:"auto", d:"住所データの作成。", t:["住所を作って","住所データ"]},
+
+  // ===== 文書・データ生成 =====
+  {n:"docx", a:"Word文書", cat:"doc", scope:"auto", d:".docxファイルの作成・編集。", t:["Wordで作って","docxを","文書を作成"]},
+  {n:"pdf", a:"PDF", cat:"doc", scope:"auto", d:"PDFの作成・編集・読み取り。", t:["PDFを作って","PDFにして","PDFを読んで"]},
+  {n:"pptx", a:"PowerPoint", cat:"doc", scope:"auto", d:".pptxスライドの作成。", t:["スライドを作って","パワポで","pptx"]},
+  {n:"xlsx", a:"Excel", cat:"doc", scope:"auto", d:".xlsxファイルの作成・編集。", t:["Excelで作って","表を作って","xlsx"]},
+  {n:"rename", a:"リネーム", cat:"util", scope:"auto", d:"ファイル名の一括変更。", t:["ファイル名を変更","リネームして","名前を一括変更"]},
+
+  // ===== 補助・自動化 =====
+  {n:"progress-bar", a:"進捗バー", cat:"util", scope:"auto", d:"複数ステップ作業で進捗バーを常時表示（常時ルール）。", t:["進捗を見せて","進捗バー","今どこまで？"]},
+  {n:"recap-footer", a:"リキャップフッター", cat:"util", scope:"auto", d:"全返信末尾に依頼要約＋結論＋しくじり/ノウハウ/Notionの5行を付与（毎回）。", t:["（常時・毎回自動）"]},
+  {n:"footer-guard", a:"フッターガード", cat:"util", scope:"auto", d:"フッター5行が無いと書き直させる強制ガード。", t:["（自動・機械強制）"]},
+  {n:"footer-guard-setup", a:"フッターガード設定", cat:"util", scope:"auto", d:"フッターガードのセットアップ。", t:["フッターガードを設定"]},
+  {n:"token-cutter", a:"トークンカッター", cat:"util", scope:"auto", d:"コンテキストを軽くしてトークンを削減。", t:["トークンを削減","軽くして","token cut"]},
+  {n:"comment-action", a:"コメント対応", cat:"util", scope:"auto", d:"従業員コメントから対応策を立案。", t:["コメントに対応","この意見への対応"]},
+  {n:"persona-bot-onboard", a:"人格Bot登録", cat:"util", scope:"auto", d:"新しい仮想人格をBotとして登録。", t:["人格Botを登録","新しい人格を追加"]},
+  {n:"sterepo-matsumoto-confirm", a:"ステレポ目標確認", cat:"util", scope:"auto", d:"ステレポの月間目標を担当者Slackから確認。", t:["ステレポ目標","目標確認"]},
+  {n:"team-launcher", a:"チームランチャー", cat:"util", scope:"auto", d:"仮想チームを起動。", t:["チームを起動","team launcher"]},
+  {n:"skill-creator", a:"スキルクリエイター", cat:"util", scope:"auto", d:"新しいスキルを作成。", t:["スキルを作って","新しいスキルを","skill creator"]},
+  {n:"skillify", a:"スキル化", cat:"util", scope:"auto", d:"手順をスキルに変換。", t:["スキルにして","これをスキル化"]},
+  {n:"consolidate-memory", a:"メモリ統合", cat:"util", scope:"auto", d:"記憶を整理・統合。", t:["メモリを整理","記憶を統合"]},
+  {n:"setup-cowork", a:"Coworkセットアップ", cat:"util", scope:"auto", d:"Cowork環境のセットアップ。", t:["Coworkを設定","cowork setup"]},
+  {n:"whoami-pc", a:"このPCは？", cat:"util", scope:"auto", d:"現在のPCを判別。", t:["このPCどれ？","whoami","どのPC？"]},
+  {n:"voice-access-setup", a:"音声アクセス設定", cat:"util", scope:"auto", d:"音声アクセスのセットアップ。", t:["音声アクセス設定"]},
+
+  // ===== OMC開発支援 =====
+  {n:"autopilot", a:"オートパイロット", cat:"omc", scope:"auto", d:"タスクを自走で完遂するTier-0ワークフロー。", t:["autopilot","オートパイロット","自走で進めて"]},
+  {n:"zenbu-susumete", a:"全部進めて", cat:"omc", scope:"auto", d:"真田が全幹部を束ね、止まらず聞かず完了まで自走。", t:["全部進めて","全部やって","最後までやって","とにかく完遂して","進めておいて","真田に任せる"]},
+  {n:"ultrawork", a:"ウルトラワーク", cat:"omc", scope:"auto", d:"並列実行エンジンで高スループット完遂。", t:["ulw","ultrawork","ウルトラワーク","並列で一気に"]},
+  {n:"ralph", a:"ラルフ", cat:"omc", scope:"auto", d:"反復実行ループ（The boulder never stops）。", t:["ralph","ラルフ"]},
+  {n:"ralplan", a:"ラルプラン", cat:"omc", scope:"auto", d:"計画＋反復実行。", t:["ralplan","ラルプラン"]},
+  {n:"team", a:"チーム", cat:"omc", scope:"auto", d:"チームオーケストレーション。", t:["team","チームで","/team"]},
+  {n:"ai-slop-cleaner", a:"AIスロップ掃除", cat:"omc", scope:"auto", d:"AI生成コードのslopを安全に削除。", t:["deslop","anti-slop","AIスロップを掃除","slopを消して"]},
+  {n:"deep-research", a:"ディープリサーチ", cat:"omc", scope:"auto", d:"多ソース・検証付きの深いリサーチレポート。", t:["deep research","深く調べて","リサーチして","徹底調査"]},
+  {n:"deep-interview", a:"ディープインタビュー", cat:"omc", scope:"auto", d:"深掘りヒアリング。", t:["deep interview","深掘りして","ヒアリングして"]},
+  {n:"plan", a:"プラン", cat:"omc", scope:"auto", d:"戦略的計画立案。", t:["計画を立てて","plan","プランを"]},
+  {n:"learner", a:"ラーナー", cat:"omc", scope:"auto", d:"案件から学びを抽出・蓄積。", t:["学びを記録","learner","教訓を残して"]},
+  {n:"self-improve", a:"自己改善", cat:"omc", scope:"auto", d:"自分の動きを改善。", t:["自己改善","self improve","動きを良くして"]},
+  {n:"ccg", a:"CCG", cat:"omc", scope:"auto", d:"OMCのCCGワークフロー。", t:["ccg"]},
+  {n:"debug", a:"デバッグ", cat:"omc", scope:"auto", d:"デバッグ支援。", t:["デバッグして","debug","原因を調べて"]},
+  {n:"verify", a:"検証", cat:"omc", scope:"auto", d:"完了の証拠ベース検証。", t:["検証して","verify","本当にできてる？"]},
+  {n:"trace", a:"トレース", cat:"omc", scope:"auto", d:"因果トレース。", t:["trace","追跡して","因果を辿って"]},
+  {n:"wiki", a:"Wiki", cat:"omc", scope:"auto", d:"プロジェクトWikiの管理。", t:["wiki"," wikiに","知識を整理"]},
+  {n:"external-context", a:"外部コンテキスト", cat:"omc", scope:"auto", d:"外部ドキュメント・最新情報を取得。", t:["external context","公式ドキュメントを","最新情報を取って"]},
+  {n:"autoresearch", a:"オートリサーチ", cat:"omc", scope:"auto", d:"自動リサーチ。", t:["autoresearch","自動で調べて"]},
+
+  // ===== 組み込みコマンド =====
+  {n:"code-review", a:"コードレビュー", cat:"builtin", scope:"auto", d:"差分のバグ・簡素化を指定レベルでレビュー。ultraでクラウド多agent。", t:["/code-review","コードレビュー","差分をレビュー","ultrareview"]},
+  {n:"simplify", a:"簡素化", cat:"builtin", scope:"auto", d:"変更コードの再利用・簡素化・効率化を適用（品質のみ）。", t:["/simplify","簡素化して","シンプルにして"]},
+  {n:"security-review", a:"セキュリティレビュー", cat:"builtin", scope:"auto", d:"セキュリティ脆弱性の検出。", t:["security review","セキュリティを見て","脆弱性チェック"]},
+  {n:"run", a:"実行（アプリ起動）", cat:"builtin", scope:"auto", d:"このプロジェクトのアプリを起動して変更を確認。", t:["/run","アプリを起動","動かして見せて"]},
+  {n:"init", a:"初期化", cat:"builtin", scope:"auto", d:"プロジェクトの初期化。", t:["/init","初期化"]},
+  {n:"review", a:"レビュー", cat:"builtin", scope:"auto", d:"汎用レビュー。", t:["/review","レビューして"]},
+  {n:"loop", a:"ループ実行", cat:"builtin", scope:"auto", d:"プロンプト/コマンドを定期間隔で繰り返し実行。", t:["/loop","定期的に実行","○分ごとに"]},
+  {n:"claude-api", a:"Claude APIリファレンス", cat:"builtin", scope:"auto", d:"Claude API/SDKの仕様・モデルID・料金リファレンス。", t:["Claude API","Anthropic SDK","モデルID","Claudeの料金"]},
+  {n:"deep-research-builtin", a:"deep-research(builtin)", cat:"builtin", scope:"auto", d:"組み込みのディープリサーチハーネス。", t:["deep research","多ソース調査"]},
+  {n:"update-config", a:"設定変更", cat:"builtin", scope:"auto", d:"settings.jsonの設定・権限・hook・環境変数を変更。", t:["設定を変えて","permissionを追加","hookを設定","これからは○○のたびに"]},
+  {n:"keybindings-help", a:"キーバインド設定", cat:"builtin", scope:"auto", d:"キーボードショートカットのカスタマイズ。", t:["キーバインド","ショートカットを変更","rebind"]},
+  {n:"fewer-permission-prompts", a:"許可確認削減", cat:"builtin", scope:"auto", d:"頻出の読み取り系コマンドを許可リスト化し確認を減らす。", t:["許可を減らして","確認を減らす","permission prompts"]},
+  {n:"schedule-builtin", a:"スケジュール（クラウド）", cat:"builtin", scope:"auto", d:"cronで動くクラウドエージェント（ルーチン）を作成・管理。", t:["定期実行を作って","cronで","スケジュールエージェント"]},
+];
+
+// ---- レンダリング ----
+const grid = document.getElementById('grid');
+const empty = document.getElementById('empty');
+const stats = document.getElementById('stats');
+const filtersEl = document.getElementById('filters');
+const searchEl = document.getElementById('search');
+let activeCat = 'all';
+let activeScope = 'all';
+
+// フィルタチップ生成
+const allChip = mkChip('all','📋 すべて');
+filtersEl.appendChild(allChip);
+Object.entries(CATS).forEach(([k,v])=>filtersEl.appendChild(mkChip(k,v)));
+const sep = document.createElement('span'); sep.style.cssText='width:1px;background:var(--border);margin:0 4px'; filtersEl.appendChild(sep);
+filtersEl.appendChild(mkScopeChip('all','全権限'));
+filtersEl.appendChild(mkScopeChip('auto','🟢 自動実行'));
+filtersEl.appendChild(mkScopeChip('pres','🟡 社長確認'));
+
+function mkChip(key,label){
+  const c=document.createElement('div');
+  c.className='chip'+(key==='all'?' active':'');
+  c.textContent=label; c.dataset.cat=key;
+  c.onclick=()=>{activeCat=key;document.querySelectorAll('.chip[data-cat]').forEach(x=>x.classList.toggle('active',x.dataset.cat===key));render();};
+  return c;
+}
+function mkScopeChip(key,label){
+  const c=document.createElement('div');
+  c.className='chip'+(key==='all'?' active':'');
+  c.textContent=label; c.dataset.scope=key;
+  c.onclick=()=>{activeScope=key;document.querySelectorAll('.chip[data-scope]').forEach(x=>x.classList.toggle('active',x.dataset.scope===key));render();};
+  return c;
+}
+
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function hl(text,q){
+  if(!q) return esc(text);
+  const i=text.toLowerCase().indexOf(q.toLowerCase());
+  if(i<0) return esc(text);
+  return esc(text.slice(0,i))+'<mark>'+esc(text.slice(i,i+q.length))+'</mark>'+esc(text.slice(i+q.length));
+}
+
+function render(){
+  const q=searchEl.value.trim();
+  const ql=q.toLowerCase();
+  const list=SKILLS.filter(s=>{
+    if(activeCat!=='all'&&s.cat!==activeCat) return false;
+    if(activeScope!=='all'&&s.scope!==activeScope) return false;
+    if(!q) return true;
+    return s.n.toLowerCase().includes(ql)
+      || s.a.toLowerCase().includes(ql)
+      || s.d.toLowerCase().includes(ql)
+      || s.t.some(x=>x.toLowerCase().includes(ql));
+  });
+  grid.innerHTML='';
+  empty.style.display=list.length?'none':'block';
+  list.forEach(s=>{
+    const card=document.createElement('div');card.className='card';
+    const trigHtml=s.t.map(x=>`<span class="trig">${hl(x,q)}</span>`).join('');
+    card.innerHTML=`
+      <div class="card-top">
+        <div>
+          <div class="card-name">${hl(s.a,q)}</div>
+          <div class="card-alias">${hl(s.n,q)}</div>
+        </div>
+        <span class="scope ${s.scope}">${s.scope==='auto'?'🟢 自動':'🟡 確認'}</span>
+      </div>
+      <div class="card-cat">${CATS[s.cat]||s.cat}</div>
+      <div class="card-desc">${hl(s.d,q)}</div>
+      <div class="triggers"><span class="trig-label">▶ 発動の言葉</span>${trigHtml}</div>
+    `;
+    grid.appendChild(card);
+  });
+  stats.textContent=`全 ${SKILLS.length} スキル中 ${list.length} 件を表示`+(q?`（「${q}」で検索）`:'');
+}
+
+searchEl.addEventListener('input',render);
+
+// テーマ
+const themeBtn=document.getElementById('themeBtn');
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  themeBtn.textContent=t==='light'?'☀️ ライト':'🌙 ダーク';
+  try{localStorage.setItem('skill-catalog-theme',t);}catch(e){}
+}
+themeBtn.onclick=()=>setTheme(document.documentElement.getAttribute('data-theme')==='light'?'dark':'light');
+let saved='dark'; try{saved=localStorage.getItem('skill-catalog-theme')||'dark';}catch(e){}
+setTheme(saved);
+
+render();
+</script>
+</body>
+</html>

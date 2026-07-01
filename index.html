@@ -13,6 +13,7 @@
     --accent:#4d9fff; --accent2:#7c5cff;
     --auto:#2ea043; --pres:#e3a008; --pres-bg:#3a2e09;
     --tag-bg:#243447; --tag-text:#9fc4ff;
+    --side:#141b23; --side-active:#1e2a3a;
     --shadow:0 4px 20px rgba(0,0,0,.35);
   }
   [data-theme="light"]{
@@ -21,112 +22,221 @@
     --accent:#0969da; --accent2:#6639d6;
     --auto:#1a7f37; --pres:#9a6700; --pres-bg:#fff8c5;
     --tag-bg:#ddf0ff; --tag-text:#0a4a8f;
+    --side:#ffffff; --side-active:#eaf3ff;
     --shadow:0 4px 16px rgba(0,0,0,.08);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif;
     background:var(--bg);color:var(--text);line-height:1.6;
-    -webkit-font-smoothing:antialiased;transition:background .2s;
+    -webkit-font-smoothing:antialiased;
   }
-  header{
-    background:linear-gradient(135deg,var(--bg2),var(--card));
-    border-bottom:1px solid var(--border);
-    padding:24px 20px 18px;position:sticky;top:0;z-index:50;
-    backdrop-filter:blur(8px);
+
+  /* ===== レイアウト：サイドバー + メイン ===== */
+  .layout{display:flex;min-height:100vh}
+  .sidebar{
+    width:264px;flex-shrink:0;background:var(--side);border-right:1px solid var(--border);
+    position:sticky;top:0;height:100vh;overflow-y:auto;padding:20px 14px;
+    display:flex;flex-direction:column;gap:18px;
   }
-  .head-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1280px;margin:0 auto}
-  h1{font-size:22px;font-weight:700;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
-  h1 .emoji{font-size:26px}
-  .sub{color:var(--text-dim);font-size:13px;margin-top:2px}
-  .spacer{flex:1}
+  .brand{display:flex;flex-direction:column;gap:3px;padding:0 6px}
+  .brand h1{font-size:19px;font-weight:800;letter-spacing:.01em;display:flex;align-items:center;gap:8px}
+  .brand h1 .emoji{font-size:23px}
+  .brand .sub{color:var(--text-dim);font-size:11.5px;line-height:1.45}
+
+  .side-section{display:flex;flex-direction:column;gap:6px}
+  .side-title{
+    font-size:11px;font-weight:800;color:var(--text-dim);letter-spacing:.08em;
+    text-transform:uppercase;padding:0 6px;margin-bottom:2px;
+  }
+  /* PCセレクタ */
+  .pc-list{display:flex;flex-direction:column;gap:5px}
+  .pc-btn{
+    display:flex;align-items:center;gap:9px;width:100%;text-align:left;
+    background:transparent;border:1px solid transparent;color:var(--text);
+    border-radius:10px;padding:9px 11px;cursor:pointer;font-size:13.5px;font-weight:600;
+    transition:.14s;
+  }
+  .pc-btn .ico{font-size:16px;width:20px;text-align:center}
+  .pc-btn .cnt{margin-left:auto;font-size:11px;color:var(--text-dim);font-weight:700;
+    background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:1px 8px}
+  .pc-btn:hover{background:var(--card-hover)}
+  .pc-btn.active{background:var(--side-active);border-color:var(--accent);color:var(--accent)}
+  .pc-btn.active .cnt{color:var(--accent);border-color:var(--accent)}
+
+  /* カテゴリナビ */
+  .nav-list{display:flex;flex-direction:column;gap:2px}
+  .nav-item{
+    display:flex;align-items:center;gap:9px;width:100%;text-align:left;
+    background:transparent;border:none;color:var(--text-dim);
+    border-radius:9px;padding:8px 11px;cursor:pointer;font-size:13px;font-weight:600;
+    transition:.12s;
+  }
+  .nav-item .ico{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+  .nav-item .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .nav-item .cnt{margin-left:auto;font-size:11px;font-weight:700;opacity:.7}
+  .nav-item:hover{background:var(--card-hover);color:var(--text)}
+  .nav-item.active{background:var(--side-active);color:var(--accent)}
+  .nav-item.active .cnt{opacity:1}
+
+  .side-foot{margin-top:auto;padding:14px 6px 4px;border-top:1px solid var(--border);
+    display:flex;flex-direction:column;gap:10px}
+  .built{font-size:11px;color:var(--text-dim);line-height:1.5}
+  .built b{color:var(--text);font-weight:700}
   .theme-btn{
     background:var(--card);border:1px solid var(--border);color:var(--text);
-    border-radius:10px;padding:8px 14px;cursor:pointer;font-size:14px;transition:.15s;
+    border-radius:10px;padding:8px 12px;cursor:pointer;font-size:13px;transition:.15s;width:100%;
   }
   .theme-btn:hover{background:var(--card-hover)}
-  .search-wrap{max-width:1280px;margin:16px auto 0;position:relative}
+
+  /* ===== メイン ===== */
+  .content{flex:1;min-width:0;display:flex;flex-direction:column}
+  .topbar{
+    position:sticky;top:0;z-index:40;background:var(--bg2);
+    border-bottom:1px solid var(--border);padding:16px 24px;
+    backdrop-filter:blur(8px);display:flex;flex-direction:column;gap:12px;
+  }
+  .topbar-row{display:flex;align-items:center;gap:12px}
+  .hamburger{display:none;background:var(--card);border:1px solid var(--border);color:var(--text);
+    border-radius:10px;padding:8px 12px;cursor:pointer;font-size:16px;line-height:1}
+  .search-wrap{position:relative;flex:1}
   #search{
-    width:100%;padding:14px 18px 14px 46px;font-size:16px;
-    background:var(--bg);border:1.5px solid var(--border);border-radius:14px;
+    width:100%;padding:12px 16px 12px 44px;font-size:15px;
+    background:var(--bg);border:1.5px solid var(--border);border-radius:12px;
     color:var(--text);outline:none;transition:.15s;
   }
   #search:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(77,159,255,.15)}
-  .search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:18px}
-  .filters{display:flex;gap:8px;flex-wrap:wrap;max-width:1280px;margin:14px auto 0}
+  .search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:17px}
+  .scope-chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .chip{
     background:var(--card);border:1px solid var(--border);color:var(--text-dim);
-    border-radius:20px;padding:6px 14px;cursor:pointer;font-size:13px;font-weight:600;
+    border-radius:20px;padding:5px 13px;cursor:pointer;font-size:12.5px;font-weight:600;
     transition:.15s;user-select:none;white-space:nowrap;
   }
   .chip:hover{background:var(--card-hover);color:var(--text)}
   .chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
-  .stats{max-width:1280px;margin:14px auto 0;color:var(--text-dim);font-size:13px}
-  main{max-width:1280px;margin:0 auto;padding:20px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+  .crumb{font-size:12.5px;color:var(--text-dim);font-weight:600}
+  .crumb b{color:var(--text)}
+
+  main{padding:20px 24px 40px}
+  .stats{color:var(--text-dim);font-size:12.5px;margin-bottom:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:15px}
   .card{
-    background:var(--card);border:1px solid var(--border);border-radius:16px;
-    padding:18px;transition:.18s;display:flex;flex-direction:column;gap:10px;
-    animation:fade .25s ease;
+    background:var(--card);border:1px solid var(--border);border-radius:15px;
+    padding:17px;transition:.16s;display:flex;flex-direction:column;gap:9px;
+    animation:fade .22s ease;
   }
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .card:hover{background:var(--card-hover);border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
   .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-  .card-name{font-size:16px;font-weight:700;color:var(--text)}
+  .card-name{font-size:15.5px;font-weight:700;color:var(--text)}
   .card-alias{font-size:12px;color:var(--accent);font-weight:600;margin-top:1px}
-  .scope{font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;white-space:nowrap;flex-shrink:0}
+  .badges{display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0}
+  .scope{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:8px;white-space:nowrap}
   .scope.auto{background:rgba(46,160,67,.15);color:var(--auto);border:1px solid var(--auto)}
   .scope.pres{background:var(--pres-bg);color:var(--pres);border:1px solid var(--pres)}
+  .pcbadge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;white-space:nowrap;
+    background:var(--tag-bg);color:var(--tag-text);border:1px solid var(--border)}
   .card-cat{display:inline-block;font-size:11px;color:var(--text-dim);font-weight:600}
-  .card-desc{font-size:13px;color:var(--text-dim);line-height:1.5}
+  .card-desc{font-size:12.5px;color:var(--text-dim);line-height:1.5}
   .triggers{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
   .trig{
-    background:var(--tag-bg);color:var(--tag-text);font-size:12px;font-weight:600;
-    padding:4px 10px;border-radius:8px;white-space:nowrap;
+    background:var(--tag-bg);color:var(--tag-text);font-size:11.5px;font-weight:600;
+    padding:4px 9px;border-radius:8px;white-space:nowrap;
   }
   .trig-label{font-size:11px;color:var(--text-dim);font-weight:700;width:100%;margin-bottom:2px}
   .empty{text-align:center;padding:60px 20px;color:var(--text-dim);font-size:15px}
   mark{background:var(--accent);color:#fff;border-radius:3px;padding:0 2px}
-  footer{text-align:center;color:var(--text-dim);font-size:12px;padding:30px 20px 50px}
-  @media(max-width:640px){
+  footer{color:var(--text-dim);font-size:11.5px;padding:24px;border-top:1px solid var(--border);line-height:1.7}
+
+  /* オーバーレイ（モバイルのドロワー） */
+  .backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:60}
+
+  @media(max-width:900px){
+    .hamburger{display:block}
+    .sidebar{position:fixed;left:0;top:0;z-index:70;transform:translateX(-100%);
+      transition:transform .22s ease;box-shadow:var(--shadow)}
+    .sidebar.open{transform:translateX(0)}
+    .backdrop.show{display:block}
     .grid{grid-template-columns:1fr}
-    h1{font-size:18px}
-    #search{font-size:15px}
   }
 </style>
 </head>
 <body>
-<header>
-  <div class="head-row">
-    <div>
+<div class="layout">
+  <!-- ===== サイドバー ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
       <h1><span class="emoji">🎛️</span>スキル発動早見表</h1>
-      <div class="sub">どの言葉を言えば、どのスキルが起動するか — 高木産業グループ Claude Code</div>
+      <div class="sub">どの言葉で、どのスキルが起動するか<br>高木産業グループ Claude Code</div>
     </div>
-    <div class="spacer"></div>
-    <button class="theme-btn" id="themeBtn">🌙 ダーク</button>
+
+    <div class="side-section">
+      <div class="side-title">🖥️ パソコン別</div>
+      <div class="pc-list" id="pcList"></div>
+    </div>
+
+    <div class="side-section">
+      <div class="side-title">📂 カテゴリ</div>
+      <div class="nav-list" id="navList"></div>
+    </div>
+
+    <div class="side-foot">
+      <div class="built" id="built"></div>
+      <button class="theme-btn" id="themeBtn">🌙 ダーク</button>
+    </div>
+  </aside>
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- ===== メイン ===== -->
+  <div class="content">
+    <div class="topbar">
+      <div class="topbar-row">
+        <button class="hamburger" id="hamburger" aria-label="メニュー">☰</button>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input id="search" type="text" placeholder="キーワードで検索（例：送って / バグ / 同期 / 画像 / 仕様書）" autocomplete="off">
+        </div>
+      </div>
+      <div class="topbar-row" style="justify-content:space-between">
+        <div class="scope-chips" id="scopeChips"></div>
+        <div class="crumb" id="crumb"></div>
+      </div>
+    </div>
+
+    <main>
+      <div class="stats" id="stats"></div>
+      <div class="grid" id="grid"></div>
+      <div class="empty" id="empty" style="display:none">該当するスキルがありません。別のキーワードでお試しください。</div>
+    </main>
+
+    <footer>
+      💡 <b style="color:var(--auto)">🟢 自動</b>＝真田判断で自動実行 ／ <b style="color:var(--pres)">🟡 確認</b>＝対人送信など社長確認が要る操作（社長専管3件）<br>
+      🖥️ 3台のPC（自宅デスク・ノートPC・会社デスク）は skill-sync で同期＝原則すべて共通。特定PCだけのスキルには <span class="pcbadge">🏠 自宅のみ</span> のようなバッジが付きます。<br>
+      データ源：各スキルの発動条件（description）＋ CLAUDE.md のキーワードトリガー
+    </footer>
   </div>
-  <div class="search-wrap">
-    <span class="search-icon">🔍</span>
-    <input id="search" type="text" placeholder="キーワードで検索（例：送って / バグ / 同期 / 画像 / 仕様書 / 要件）" autocomplete="off">
-  </div>
-  <div class="filters" id="filters"></div>
-  <div class="stats" id="stats"></div>
-</header>
-<main>
-  <div class="grid" id="grid"></div>
-  <div class="empty" id="empty" style="display:none">該当するスキルがありません。別のキーワードでお試しください。</div>
-</main>
-<footer>
-  💡 緑バッジ＝真田判断で自動実行 ／ 黄バッジ＝対人送信など社長確認が要る操作（社長専管3件）<br>
-  データ源：各スキルの発動条件（description）＋ CLAUDE.md のキーワードトリガー
-</footer>
+</div>
 
 <script>
+// 生成時刻（このファイルを作った時刻＝早見表のビルド時刻）
+const BUILT = "2026-07-01 15:29";
+
 const CATS = {
-  dev:"💻 開発・品質", org:"🏛️ 組織・部長制", send:"📤 送信・連絡",
-  sync:"🔄 同期・PC連携", design:"🎨 デザイン・画像", browser:"🌐 ブラウザ・ログイン",
-  keiei:"📊 経営・財務・法務", sched:"📅 予定・スケジュール", util:"🛠️ 自動化・補助",
-  doc:"📄 文書・データ生成", omc:"⚙️ OMC開発支援", builtin:"🔧 組み込みコマンド"
+  dev:{ico:"💻",label:"開発・品質"}, org:{ico:"🏛️",label:"組織・部長制"}, send:{ico:"📤",label:"送信・連絡"},
+  sync:{ico:"🔄",label:"同期・PC連携"}, design:{ico:"🎨",label:"デザイン・画像"}, browser:{ico:"🌐",label:"ブラウザ・ログイン"},
+  keiei:{ico:"📊",label:"経営・財務・法務"}, sched:{ico:"📅",label:"予定・スケジュール"}, util:{ico:"🛠️",label:"自動化・補助"},
+  doc:{ico:"📄",label:"文書・データ生成"}, omc:{ico:"⚙️",label:"OMC開発支援"}, builtin:{ico:"🔧",label:"組み込みコマンド"}
+};
+function catLabel(k){const c=CATS[k];return c?c.ico+" "+c.label:k;}
+
+// PC定義（pc未指定のスキル＝3台すべてにある＝共通）
+const ALL_PC = ["home","note","office"];
+const PCS = {
+  all:   {ico:"📋", label:"全PC共通"},
+  home:  {ico:"🏠", label:"自宅デスク", short:"自宅"},
+  note:  {ico:"💻", label:"ノートPC",   short:"ノート"},
+  office:{ico:"🏢", label:"会社デスク", short:"会社"}
 };
 
 const SKILLS = [
@@ -209,6 +319,7 @@ const SKILLS = [
   {n:"logo-design-team", a:"ロゴデザインチーム", cat:"design", scope:"auto", d:"ロゴを専門チームで設計・制作。", t:["ロゴを作って","ロゴデザイン","ロゴチームで"]},
   {n:"saotome-creator", a:"早乙女クリエイター", cat:"design", scope:"auto", d:"早乙女名義のクリエイティブ制作。", t:["早乙女で作って","クリエイティブを"]},
   {n:"bucho-chibi-icon", a:"部長ちびアイコン", cat:"design", scope:"auto", d:"部長のちびキャラアイコンを生成。", t:["部長アイコン","ちびアイコン","部長の顔を作って"]},
+  {n:"saiyo-page-creator", a:"採用ページ作成", cat:"design", scope:"auto", d:"採用ページを作成。（現在このPC=自宅デスクにのみ導入・未同期）", t:["採用ページを作って","求人ページ","採用サイト"], pc:["home"]},
   {n:"welcome-board", a:"ウェルカムボード", cat:"design", scope:"auto", d:"歓迎ボード・掲示物の制作。", t:["ウェルカムボード","歓迎ボード"]},
 
   // ===== 予定・スケジュール =====
@@ -300,38 +411,71 @@ const SKILLS = [
   {n:"schedule-builtin", a:"スケジュール（クラウド）", cat:"builtin", scope:"auto", d:"cronで動くクラウドエージェント（ルーチン）を作成・管理。", t:["定期実行を作って","cronで","スケジュールエージェント"]},
 ];
 
-// ---- レンダリング ----
+// スキルが対象PCにあるか（pc未指定＝3台共通）
+function skillPcs(s){ return s.pc && s.pc.length ? s.pc : ALL_PC; }
+function onPc(s, pc){ return pc==='all' || skillPcs(s).includes(pc); }
+
+// ---- 要素 ----
 const grid = document.getElementById('grid');
 const empty = document.getElementById('empty');
 const stats = document.getElementById('stats');
-const filtersEl = document.getElementById('filters');
+const crumb = document.getElementById('crumb');
+const pcListEl = document.getElementById('pcList');
+const navListEl = document.getElementById('navList');
+const scopeChipsEl = document.getElementById('scopeChips');
 const searchEl = document.getElementById('search');
+const builtEl = document.getElementById('built');
+let activePc = 'all';
 let activeCat = 'all';
 let activeScope = 'all';
 
-// フィルタチップ生成
-const allChip = mkChip('all','📋 すべて');
-filtersEl.appendChild(allChip);
-Object.entries(CATS).forEach(([k,v])=>filtersEl.appendChild(mkChip(k,v)));
-const sep = document.createElement('span'); sep.style.cssText='width:1px;background:var(--border);margin:0 4px'; filtersEl.appendChild(sep);
-filtersEl.appendChild(mkScopeChip('all','全権限'));
-filtersEl.appendChild(mkScopeChip('auto','🟢 自動実行'));
-filtersEl.appendChild(mkScopeChip('pres','🟡 社長確認'));
+// ---- 生成時刻 ----
+builtEl.innerHTML = `作成：<b>${BUILT}</b><br>全 <b>${SKILLS.length}</b> スキル収録`;
 
-function mkChip(key,label){
-  const c=document.createElement('div');
-  c.className='chip'+(key==='all'?' active':'');
-  c.textContent=label; c.dataset.cat=key;
-  c.onclick=()=>{activeCat=key;document.querySelectorAll('.chip[data-cat]').forEach(x=>x.classList.toggle('active',x.dataset.cat===key));render();};
-  return c;
+// ---- PCセレクタ ----
+function buildPcList(){
+  pcListEl.innerHTML='';
+  ['all','home','note','office'].forEach(pc=>{
+    const p=PCS[pc];
+    const cnt = SKILLS.filter(s=>onPc(s,pc)).length;
+    const b=document.createElement('button');
+    b.className='pc-btn'+(pc===activePc?' active':'');
+    b.dataset.pc=pc;
+    b.innerHTML=`<span class="ico">${p.ico}</span><span>${p.label}</span><span class="cnt">${cnt}</span>`;
+    b.onclick=()=>{activePc=pc;buildPcList();buildNav();render();closeDrawer();};
+    pcListEl.appendChild(b);
+  });
 }
-function mkScopeChip(key,label){
-  const c=document.createElement('div');
-  c.className='chip'+(key==='all'?' active':'');
-  c.textContent=label; c.dataset.scope=key;
-  c.onclick=()=>{activeScope=key;document.querySelectorAll('.chip[data-scope]').forEach(x=>x.classList.toggle('active',x.dataset.scope===key));render();};
-  return c;
+
+// ---- カテゴリナビ ----
+function buildNav(){
+  navListEl.innerHTML='';
+  const pcSkills = SKILLS.filter(s=>onPc(s,activePc));
+  const allItem=mkNav('all','📋','すべて',pcSkills.length);
+  navListEl.appendChild(allItem);
+  Object.keys(CATS).forEach(k=>{
+    const cnt=pcSkills.filter(s=>s.cat===k).length;
+    if(cnt===0) return;
+    navListEl.appendChild(mkNav(k,CATS[k].ico,CATS[k].label,cnt));
+  });
 }
+function mkNav(key,ico,label,cnt){
+  const it=document.createElement('button');
+  it.className='nav-item'+(key===activeCat?' active':'');
+  it.dataset.cat=key;
+  it.innerHTML=`<span class="ico">${ico}</span><span class="lbl">${label}</span><span class="cnt">${cnt}</span>`;
+  it.onclick=()=>{activeCat=key;document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.cat===key));render();closeDrawer();};
+  return it;
+}
+
+// ---- 権限チップ ----
+[['all','全権限'],['auto','🟢 自動実行'],['pres','🟡 社長確認']].forEach(([k,l])=>{
+  const c=document.createElement('div');
+  c.className='chip'+(k==='all'?' active':'');
+  c.textContent=l;c.dataset.scope=k;
+  c.onclick=()=>{activeScope=k;document.querySelectorAll('.chip[data-scope]').forEach(x=>x.classList.toggle('active',x.dataset.scope===k));render();};
+  scopeChipsEl.appendChild(c);
+});
 
 function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function hl(text,q){
@@ -340,11 +484,18 @@ function hl(text,q){
   if(i<0) return esc(text);
   return esc(text.slice(0,i))+'<mark>'+esc(text.slice(i,i+q.length))+'</mark>'+esc(text.slice(i+q.length));
 }
+function pcBadge(s){
+  const pcs=skillPcs(s);
+  if(pcs.length>=3) return '';
+  const names=pcs.map(p=>PCS[p].ico+PCS[p].short).join('・');
+  return `<span class="pcbadge">${names}のみ</span>`;
+}
 
 function render(){
   const q=searchEl.value.trim();
   const ql=q.toLowerCase();
   const list=SKILLS.filter(s=>{
+    if(!onPc(s,activePc)) return false;
     if(activeCat!=='all'&&s.cat!==activeCat) return false;
     if(activeScope!=='all'&&s.scope!==activeScope) return false;
     if(!q) return true;
@@ -364,30 +515,47 @@ function render(){
           <div class="card-name">${hl(s.a,q)}</div>
           <div class="card-alias">${hl(s.n,q)}</div>
         </div>
-        <span class="scope ${s.scope}">${s.scope==='auto'?'🟢 自動':'🟡 確認'}</span>
+        <div class="badges">
+          <span class="scope ${s.scope}">${s.scope==='auto'?'🟢 自動':'🟡 確認'}</span>
+          ${pcBadge(s)}
+        </div>
       </div>
-      <div class="card-cat">${CATS[s.cat]||s.cat}</div>
+      <div class="card-cat">${catLabel(s.cat)}</div>
       <div class="card-desc">${hl(s.d,q)}</div>
       <div class="triggers"><span class="trig-label">▶ 発動の言葉</span>${trigHtml}</div>
     `;
     grid.appendChild(card);
   });
-  stats.textContent=`全 ${SKILLS.length} スキル中 ${list.length} 件を表示`+(q?`（「${q}」で検索）`:'');
+  stats.textContent=`${list.length} 件を表示`+(q?`（「${q}」で検索）`:'');
+  // パンくず
+  const pcTxt = activePc==='all' ? '全PC共通' : (PCS[activePc].ico+' '+PCS[activePc].label);
+  const catTxt = activeCat==='all' ? 'すべて' : catLabel(activeCat);
+  crumb.innerHTML=`<b>${pcTxt}</b> ／ ${catTxt}`;
 }
 
 searchEl.addEventListener('input',render);
 
-// テーマ
+// ---- テーマ ----
 const themeBtn=document.getElementById('themeBtn');
 function setTheme(t){
   document.documentElement.setAttribute('data-theme',t);
-  themeBtn.textContent=t==='light'?'☀️ ライト':'🌙 ダーク';
+  themeBtn.textContent=t==='light'?'☀️ ライトモード':'🌙 ダークモード';
   try{localStorage.setItem('skill-catalog-theme',t);}catch(e){}
 }
 themeBtn.onclick=()=>setTheme(document.documentElement.getAttribute('data-theme')==='light'?'dark':'light');
 let saved='dark'; try{saved=localStorage.getItem('skill-catalog-theme')||'dark';}catch(e){}
 setTheme(saved);
 
+// ---- モバイル ドロワー ----
+const sidebar=document.getElementById('sidebar');
+const backdrop=document.getElementById('backdrop');
+document.getElementById('hamburger').onclick=()=>{sidebar.classList.add('open');backdrop.classList.add('show');};
+function closeDrawer(){sidebar.classList.remove('open');backdrop.classList.remove('show');}
+backdrop.onclick=closeDrawer;
+
+// ---- 初期描画 ----
+buildPcList();
+buildNav();
 render();
 </script>
 </body>
